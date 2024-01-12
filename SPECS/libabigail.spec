@@ -2,8 +2,8 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.3
-Release: 1%{?dist}
+Version: 2.2
+Release: 2%{?dist}
 Summary: Set of ABI analysis tools
 
 License: ASL 2.0
@@ -18,6 +18,7 @@ BuildRequires: doxygen
 BuildRequires: %{_bindir}/python3
 BuildRequires: python3-sphinx
 BuildRequires: texinfo
+BuildRequires: dos2unix
 
 %description
 The libabigail package comprises six command line utilities:
@@ -79,6 +80,7 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 # Install man and texinfo files as they are not installed by the
 # default 'install' target of the makefile.
 make -C doc/manuals install-man-and-info-doc DESTDIR=%{buildroot}
+dos2unix doc/manuals/html/_static/jquery.js
 
 %check
 time make %{?_smp_mflags} check check-self-compare || (cat tests/test-suite.log && exit 2)
@@ -105,8 +107,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.2
-%{_libdir}/libabigail.so.2.0.0
+%{_libdir}/libabigail.so.1
+%{_libdir}/libabigail.so.1.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -125,12 +127,6 @@ fi
 %doc doc/manuals/html/*
 
 %changelog
-* Tue May 09 2023 Dodji Seketeli <dodji@redhat.com> - 2.3-1
-- Update to upstream 2.3
-- Remove the dos2unix surgery as it's now useless
-- Update for the soname bump
-- Resolves: RHELPLAN-154803
-
 * Tue Dec 13 2022 Dodji Seketeli <dodji@redhat.com> - 2.2-1
 - Update to upstream 2.2
 - Switch to .xz tarball
