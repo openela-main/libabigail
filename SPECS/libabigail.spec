@@ -2,23 +2,26 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.2
-Release: 2%{?dist}
+Version: 2.4
+Release: 3%{?dist}
 Summary: Set of ABI analysis tools
 
-License: ASL 2.0
+License: Apache-2.0 WITH LLVM-exception
 URL: https://sourceware.org/libabigail/
 Source0: http://mirrors.kernel.org/sourceware/libabigail/%{tarball_name}.tar.xz
+Patch1: 0001-Bug-31045-Don-t-try-setting-translation-unit-for-uni.patch
+Patch2: 0002-suppression-Add-has_strict_flexible_array_data_membe.patch
 
+BuildRequires: git
 BuildRequires: gcc-c++
 BuildRequires: libtool
 BuildRequires: elfutils-devel
+BuildRequires: libbpf-devel
 BuildRequires: libxml2-devel
 BuildRequires: doxygen
 BuildRequires: %{_bindir}/python3
 BuildRequires: python3-sphinx
 BuildRequires: texinfo
-BuildRequires: dos2unix
 
 %description
 The libabigail package comprises six command line utilities:
@@ -59,10 +62,11 @@ form of man pages, texinfo documentation and API documentation in html
 format.
 
 %prep
-%setup -n %{tarball_name}
+%autosetup -v -S git
+autoreconf
 
 %build
-%configure --disable-deb  --disable-fedabipkgdiff --disable-zip-archive --disable-static
+%configure --enable-btf --disable-deb  --disable-fedabipkgdiff --disable-zip-archive --disable-static
 make %{?_smp_mflags}
 pushd doc
 make html-doc
@@ -80,10 +84,10 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 # Install man and texinfo files as they are not installed by the
 # default 'install' target of the makefile.
 make -C doc/manuals install-man-and-info-doc DESTDIR=%{buildroot}
-dos2unix doc/manuals/html/_static/jquery.js
 
 %check
-time make %{?_smp_mflags} check check-self-compare || (cat tests/test-suite.log && exit 2)
+time make %{?_smp_mflags} check  || (cat tests/test-suite.log && exit 2)
+time make %{?_smp_mflags} check-self-compare || (cat tests/test-suite.log && exit 2)
 
 if test $? -ne 0; then
   cat tests/tests-suite.log
@@ -107,8 +111,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.1
-%{_libdir}/libabigail.so.1.0.0
+%{_libdir}/libabigail.so.3
+%{_libdir}/libabigail.so.3.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -127,6 +131,35 @@ fi
 %doc doc/manuals/html/*
 
 %changelog
+* Fri Nov 17 2023 Dodji Seketeli <dodji@redhat.com> - 2.4-3
+- Fix SPDX Licensing string
+
+* Thu Nov 16 2023 Dodji Seketeli <dodji@redhat.com> - 2.4-2
+- Apply patch: 0001-Bug-31045-Don-t-try-setting-translation-unit-for-uni.patch
+  Resolves: https://issues.redhat.com/browse/RHEL-16614
+- Apply patch: 0002-suppression-Add-has_strict_flexible_array_data_membe.patch
+  Resolves: https://issues.redhat.com/browse/RHEL-16629
+- Add git as a build requirement as we need git to apply the patches
+  aboves that apply binaries.
+- Use %%autosetup to handle applying the patches using git.
+- autoreconf after the patches touched at least one Makefile.am file.
+
+* Wed Nov 01 2023 Dodji Seketeli <dodji@redhat.com> - 2.4-1
+- Update to upstream 2.4
+- Use SPDX licensing naming
+- Build BTF support
+- Add BuildRequires: libbpf-devel
+- Update for SONAME bump
+- Show details about the check and check-self-targets targets
+  separatly.
+- Resolves: RHEL-12491
+
+* Tue May 09 2023 Dodji Seketeli <dodji@redhat.com> - 2.3-1
+- Update to upstream 2.3
+- Remove the dos2unix surgery as it's now useless
+- Update for the soname bump
+- Resolves: RHELPLAN-154803
+
 * Tue Dec 13 2022 Dodji Seketeli <dodji@redhat.com> - 2.2-1
 - Update to upstream 2.2
 - Switch to .xz tarball
