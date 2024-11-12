@@ -2,15 +2,13 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.4
-Release: 3%{?dist}
+Version: 2.5
+Release: 1%{?dist}
 Summary: Set of ABI analysis tools
 
 License: Apache-2.0 WITH LLVM-exception
 URL: https://sourceware.org/libabigail/
 Source0: http://mirrors.kernel.org/sourceware/libabigail/%{tarball_name}.tar.xz
-Patch1: 0001-Bug-31045-Don-t-try-setting-translation-unit-for-uni.patch
-Patch2: 0002-suppression-Add-has_strict_flexible_array_data_membe.patch
 
 BuildRequires: git
 BuildRequires: gcc-c++
@@ -19,8 +17,8 @@ BuildRequires: elfutils-devel
 BuildRequires: libbpf-devel
 BuildRequires: libxml2-devel
 BuildRequires: doxygen
-BuildRequires: %{_bindir}/python3
 BuildRequires: python3-sphinx
+BuildRequires: python3-devel
 BuildRequires: texinfo
 
 %description
@@ -111,8 +109,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.3
-%{_libdir}/libabigail.so.3.0.0
+%{_libdir}/libabigail.so.4
+%{_libdir}/libabigail.so.4.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -131,6 +129,14 @@ fi
 %doc doc/manuals/html/*
 
 %changelog
+* Tue Apr 23 2024 Dodji Seketeli <dodji@redhat.com> - 2.5-1
+- Update to upstream 2.5 tarball
+- Drop patches (as they are now upstream):
+  0001-Bug-31045-Don-t-try-setting-translation-unit-for-uni.patch
+  0002-suppression-Add-has_strict_flexible_array_data_membe.patch
+- Add BuildRequires: python3-devel
+- Remove BuildRequires: %%{_bindir}/python3
+
 * Fri Nov 17 2023 Dodji Seketeli <dodji@redhat.com> - 2.4-3
 - Fix SPDX Licensing string
 
