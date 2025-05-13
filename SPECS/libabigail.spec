@@ -2,7 +2,7 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.5
+Version: 2.6
 Release: 1%{?dist}
 Summary: Set of ABI analysis tools
 
@@ -16,6 +16,7 @@ BuildRequires: libtool
 BuildRequires: elfutils-devel
 BuildRequires: libbpf-devel
 BuildRequires: libxml2-devel
+BuildRequires: xxhash-devel
 BuildRequires: doxygen
 BuildRequires: python3-sphinx
 BuildRequires: python3-devel
@@ -64,7 +65,7 @@ format.
 autoreconf
 
 %build
-%configure --enable-btf --disable-deb  --disable-fedabipkgdiff --disable-zip-archive --disable-static
+%configure --enable-btf --disable-deb  --disable-fedabipkgdiff --disable-abidb --disable-zip-archive --disable-static
 make %{?_smp_mflags}
 pushd doc
 make html-doc
@@ -109,8 +110,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.4
-%{_libdir}/libabigail.so.4.0.0
+%{_libdir}/libabigail.so.5
+%{_libdir}/libabigail.so.5.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -129,6 +130,13 @@ fi
 %doc doc/manuals/html/*
 
 %changelog
+* Fri Nov 8 2024 Dodji Seketeli <dodji@redhat.com> - 2.6.1
+- Update to upstream 2.6 tarball
+- Update to changing SONAME (libabigail.so.5.0.0)
+- Add BuildRequires xxhash-devel
+- Disable abidb as its dependencies are not present in RHEL 9.6
+- Resolves https://issues.redhat.com/browse/RHEL-64069
+
 * Tue Apr 23 2024 Dodji Seketeli <dodji@redhat.com> - 2.5-1
 - Update to upstream 2.5 tarball
 - Drop patches (as they are now upstream):
