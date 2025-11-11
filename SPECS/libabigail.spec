@@ -2,8 +2,8 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.6
-Release: 1%{?dist}
+Version: 2.8
+Release: 2%{?dist}
 Summary: Set of ABI analysis tools
 
 License: Apache-2.0 WITH LLVM-exception
@@ -14,6 +14,7 @@ BuildRequires: git
 BuildRequires: gcc-c++
 BuildRequires: libtool
 BuildRequires: elfutils-devel
+BuildRequires: binutils-devel
 BuildRequires: libbpf-devel
 BuildRequires: libxml2-devel
 BuildRequires: xxhash-devel
@@ -65,7 +66,7 @@ format.
 autoreconf
 
 %build
-%configure --enable-btf --disable-deb  --disable-fedabipkgdiff --disable-abidb --disable-zip-archive --disable-static
+%configure --enable-btf --enable-ctf --disable-deb  --disable-fedabipkgdiff --disable-abidb --disable-zip-archive --disable-static
 make %{?_smp_mflags}
 pushd doc
 make html-doc
@@ -110,8 +111,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.5
-%{_libdir}/libabigail.so.5.0.0
+%{_libdir}/libabigail.so.7
+%{_libdir}/libabigail.so.7.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -130,6 +131,22 @@ fi
 %doc doc/manuals/html/*
 
 %changelog
+* Wed Jul 09 2025 Dodji Seketeli <dodji@redhat.com> - 2.8-2
+- Rebuild for c9s
+- Resolves: RHEL-102573
+
+* Mon Jul 07 2025 Dodji Seketeli <dodji@redhat.com> - 2.8-1
+- Update to upstream 2.8 tarball
+- Update to changing SONAME (libabigail.so.7.0.0)
+
+* Mon Apr 14 2025 Dodji Seketeli <dodji@redhat.com> - 2.7-1
+- Update to upstream 2.7 tarball
+- Add binutils-devel as buildrequire to potentially enable the CTF
+  backend.  This will allow the enabling of the CTF backend for
+  binutils-devel > 2.35.2
+- Update to changing SONAME (libabigail.so.6.0.0)
+- Add --enable-ctf to the configure command line
+
 * Fri Nov 8 2024 Dodji Seketeli <dodji@redhat.com> - 2.6.1
 - Update to upstream 2.6 tarball
 - Update to changing SONAME (libabigail.so.5.0.0)
