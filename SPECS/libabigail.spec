@@ -2,8 +2,8 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.6
-Release: 1%{?dist}
+Version: 2.8
+Release: 2%{?dist}
 Summary: Set of ABI analysis tools
 
 License: Apache-2.0 WITH LLVM-exception
@@ -28,6 +28,7 @@ BuildRequires: koji
 BuildRequires: python3-koji
 %endif
 BuildRequires: wget
+BuildRequires: xxhash-devel
 
 %description
 The libabigail package comprises seven command line utilities:
@@ -94,10 +95,10 @@ them manually.
 %endif
 
 %prep
-%autosetup -v -S git
+%setup -n %{tarball_name}
 
 %build
-%configure --enable-btf --enable-ctf --disable-silent-rules --disable-zip-archive --disable-static
+%configure --enable-btf --enable-ctf --enable-inlined-xxhash --disable-deb --disable-silent-rules --disable-zip-archive --disable-static 
 make %{?_smp_mflags}
 pushd doc
 make html-doc
@@ -138,8 +139,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.5
-%{_libdir}/libabigail.so.5.0.0
+%{_libdir}/libabigail.so.7
+%{_libdir}/libabigail.so.7.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -163,6 +164,28 @@ fi
 %endif
 
 %changelog
+* Wed Jul 09 2025 Dodji Seketeli <dodji@redhat.com> - 2.8-2
+- Rebuild for c10s
+- Resolves: RHEL-102574
+
+* Wed Jul 9 2025 Dodji Seketeli <dodji@redhat.com> - 2.8-1
+- Update to upstream 2.8 tarball
+- Remove 0001-Fix-fedabipkgdiff-configure-check-for-Python-3.12.patch
+  that is applied upstream.
+- Update to changing SONAME (libabigail.so.7.0.0)
+- Add xxhash-devel as BuildRequires and inlined-xxhash to avoid
+  depending on it at runtime
+
+* Tue May 6 2025 Michal Kolar <mkolar@redhat.com> - 2.7-3
+- Fix CI relevant issues
+
+* Tue May 6 2025 Dodji Seketeli <dodji@redhat.com> - 2.7-2
+- Use xxhash functions inlined since xxhash is buildroot-only in RHEL 10.1
+
+* Mon Apr 14 2025 Dodji Seketeli <dodji@redhat.com> - 2.7.1
+- Update to upstream 2.7 tarball
+- Update to changing SONAME (libabigail.so.6.0.0)
+
 * Fri Dec 13 2024 Dodji Seketeli <dodji@redhat.com> - 2.6-1
 - Update to upstream 2.6 tarball
 - Update to changing SONAME (libabigail.so.5.0.0)
