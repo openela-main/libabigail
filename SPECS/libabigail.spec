@@ -2,8 +2,8 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.8
-Release: 2%{?dist}
+Version: 2.9
+Release: 1%{?dist}
 Summary: Set of ABI analysis tools
 
 License: Apache-2.0 WITH LLVM-exception
@@ -123,12 +123,7 @@ make -C doc/manuals install-man-and-info-doc DESTDIR=%{buildroot}
 %endif
 
 %check
-time make %{?_smp_mflags} check  || (cat tests/test-suite.log && exit 2)
-time make %{?_smp_mflags} check-self-compare || (cat tests/test-suite.log && exit 2)
-
-if test $? -ne 0; then
-  cat tests/tests-suite.log
-fi
+time make %{?_smp_mflags} check check-self-compare || (cat tests/test-suite.log && exit 2)
 
 %ldconfig_scriptlets
 
@@ -139,8 +134,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.7
-%{_libdir}/libabigail.so.7.0.0
+%{_libdir}/libabigail.so.8
+%{_libdir}/libabigail.so.8.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -164,6 +159,12 @@ fi
 %endif
 
 %changelog
+* Thu Nov 13 2025 RHEL Packaging Agent <jotnar@redhat.com> - 2.9-1
+- Rebase to upstream 2.9 tarball
+- Update to changing SONAME (libabigail.so.8.0.0)
+- Simplify %check section to run both test targets in single invocation
+- Resolves: RHEL-121667
+
 * Wed Jul 09 2025 Dodji Seketeli <dodji@redhat.com> - 2.8-2
 - Rebuild for c10s
 - Resolves: RHEL-102574
