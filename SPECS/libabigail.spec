@@ -2,7 +2,7 @@
 %global tarball_name %{name}-%{version}
 
 Name: libabigail
-Version: 2.9
+Version: 2.10
 Release: 1%{?dist}
 Summary: Set of ABI analysis tools
 
@@ -106,8 +106,8 @@ fi
 %{_bindir}/abilint
 %{_bindir}/abipkgdiff
 %{_bindir}/kmidiff
-%{_libdir}/libabigail.so.8
-%{_libdir}/libabigail.so.8.0.0
+%{_libdir}/libabigail.so.9
+%{_libdir}/libabigail.so.9.0.0
 %{_libdir}/libabigail/default.abignore
 %doc README AUTHORS ChangeLog
 %license LICENSE.txt license-change-2020.txt
@@ -126,6 +126,11 @@ fi
 %doc doc/manuals/html/*
 
 %changelog
+* Thu Apr 30 2026 Dodji Seketeli <dodji@redhat.com> - 2.10-1
+- Update to upstream 2.10 tarball
+- Adjust to libabigail.so.9.0.0 SONAME
+- Resolves: RHEL-169432
+
 * Fri Nov 14 2025 RHEL Packaging Agent <jotnar@redhat.com> - 2.9-1
 - Update to upstream 2.9 tarball
 - Update to changing SONAME (libabigail.so.8.0.0)
